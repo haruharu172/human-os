@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>HUMAN OS // STRATEGY ARENA v6</title>
+  <style>
+    :root {
+      --bg: #070b14;
+      --panel: #0e1626;
+      --panel-2: #142038;
+      --border: #233554;
+      --text: #e6eefc;
+      --muted: #8fa3c7;
+      --blue: #38bdf8;
+      --blue-dim: rgba(56, 189, 248, 0.14);
+      --red: #fb7185;
+      --red-dim: rgba(251, 113, 133, 0.14);
+      --gold: #fbbf24;
+      --green: #34d399;
+      --safe-bottom: env(safe-area-inset-bottom, 24px);
+    }
+
+    body.skin-winter {
+      --bg: #08121e;
+      --panel: #0f2136;
+      --panel-2: #16304d;
+      --border: #2a527a;
+      --text: #f0f9ff;
+      --muted: #9bc4e2;
+      --blue: #7dd3fc;
+      --blue-dim: rgba(125, 211, 252, 0.16);
+      --red: #f472b6;
+      --red-dim: rgba(244, 114, 182, 0.16);
+    }
+
+    body.skin-crimson {
+      --bg: #12080c;
+      --panel: #210e16;
+      --panel-2: #311420;
+      --border: #5c243a;
+      --text: #fff1f2;
+      --muted: #d49aad;
+      --blue: #60a5fa;
+      --blue-dim: rgba(96, 165, 250, 0.15);
+      --red: #ff4d6d;
+      --red-dim: rgba(255, 77, 109, 0.16);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hiragino Sans", "Noto Sans JP", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding-bottom: calc(84px + var(--safe-bottom));
+    }
+
+    .container {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 16px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      margin-bottom: 14px;
+    }
+
+    .brand {
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      font-size: 15px;
+      color: var(--blue);
+    }
+
+    .brand span {
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 12px;
+      margin-left: 6px;
+    }
+
+    .stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      font-size: 13px;
+    }
+
+    .badge {
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-weight: 700;
+    }
+
+    .badge.gold { color: var(--gold); }
+    .badge.green { color: var(--green); }
+
+    .icon-btn {
+      background: var(--panel-2);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 5px 11px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+
+    .section-title {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      color: var(--blue);
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+
+    .controls-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .chip {
+      background: var(--panel-2);
+      color: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .chip.active {
+      background: var(--blue-dim);
+      color: var(--text);
+      border-color: var(--blue);
+    }
+
+    .case-meta {
+      display: grid;
+      gap: 8px;
+      background: var(--panel-2);
+      border-radius: 10px;
+      padding: 12px;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    .case-meta div strong {
+      color: var(--gold);
+      margin-right: 6px;
+    }
+
+    .recon-box {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    input[type="text"], textarea {
+      width: 100%;
+      background: var(--bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 15px;
+      font-family: inherit;
+    }
+
+    textarea {
+      min-height: 150px;
+      resize: vertical;
+    }
+
+    .btn-primary {
+      width: 100%;
+      background: var(--blue);
+      color: #04101d;
+      border: none;
+      border-radius: 12px;
+      padding: 14px 18px;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      background: var(--panel-2);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .recon-log {
+      margin-top: 10px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .recon-item {
+      background: var(--bg);
+      border-left: 3px solid var(--gold);
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+    }
+
+    .vs-grid {
+      display: grid;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    @media (min-width: 640px) {
+      .vs-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    .fighter-card {
+      border-radius: 12px;
+      padding: 14px;
+      border: 1px solid var(--border);
+    }
+
+    .fighter-card.you {
+      background: var(--blue-dim);
+      border-color: var(--blue);
+    }
+
+    .fighter-card.rival {
+      background: var(--red-dim);
+      border-color: var(--red);
+    }
+
+    .score-big {
+      font-size: 28px;
+      font-weight: 900;
+    }
+
+    .axis-row {
+      margin-bottom: 10px;
+    }
+
+    .axis-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+
+    .bar-wrap {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      height: 8px;
+      background: var(--bg);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .bar-you { background: var(--blue); height: 100%; }
+    .bar-rival { background: var(--red); height: 100%; justify-self: end; }
+
+    .backfire {
+      background: rgba(251, 113, 133, 0.16);
+      border: 1px solid var(--red);
+      color: #ffd6de;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 13px;
+      margin-top: 10px;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.72);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 50;
+    }
+
+    .modal-backdrop.open { display: flex; }
+
+    .modal-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      max-width: 460px;
+      width: 100%;
+      padding: 20px;
+    }
+
+    .modal-card ol {
+      padding-left: 18px;
+      margin: 12px 0 18px;
+    }
+
+    .modal-card li {
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 24px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">HUMAN OS<span>// STRATEGY ARENA v6</span></div>
+      <div class="stats">
+        <div class="badge green" id="rateBadge">RATE 1000</div>
+        <div class="badge gold" id="crBadge">500 CR</div>
+        <div class="badge" id="timerBadge" style="display:none;">03:00</div>
+        <button class="icon-btn" id="openRulesBtn">? RULES</button>
+      </div>
+    </header>
+
+    <section class="card">
+      <div class="section-title">MODE &amp; DIFFICULTY // モード・難易度選択</div>
+      <div class="controls-row" id="modeRow">
+        <button class="chip active" data-mode="free">FREE TIME（制限時間なし）</button>
+        <button class="chip" data-mode="blitz">BLITZ 03:00（実戦タイマー / 勝利+20%CR）</button>
+      </div>
+      <div class="controls-row" id="levelRow">
+        <button class="chip active" data-level="1">LV.1 NORMAL（x1.0）</button>
+        <button class="chip" data-level="2">LV.2 HARD（x1.5）</button>
+        <button class="chip" data-level="3">LV.3 INSANE（x2.5）</button>
+      </div>
+      <div class="controls-row" id="catRow">
+        <button class="chip active" data-cat="all">すべて</button>
+        <button class="chip" data-cat="恋愛・対人">恋愛・対人</button>
+        <button class="chip" data-cat="仕事・大学">仕事・大学</button>
+        <button class="chip" data-cat="修羅
