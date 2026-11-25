@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>HUMAN OS // STRATEGY ARENA v6</title>
+  <style>
+    :root {
+      --bg: #070b14;
+      --panel: #0e1626;
+      --panel-2: #142038;
+      --border: #233554;
+      --text: #e6eefc;
+      --muted: #8fa3c7;
+      --blue: #38bdf8;
+      --blue-dim: rgba(56, 189, 248, 0.14);
+      --red: #fb7185;
+      --red-dim: rgba(251, 113, 133, 0.14);
+      --gold: #fbbf24;
+      --green: #34d399;
+      --safe-bottom: env(safe-area-inset-bottom, 24px);
+    }
+
+    body.skin-winter {
+      --bg: #08121e;
+      --panel: #0f2136;
+      --panel-2: #16304d;
+      --border: #2a527a;
+      --text: #f0f9ff;
+      --muted: #9bc4e2;
+      --blue: #7dd3fc;
+      --blue-dim: rgba(125, 211, 252, 0.16);
+      --red: #f472b6;
+      --red-dim: rgba(244, 114, 182, 0.16);
+    }
+
+    body.skin-crimson {
+      --bg: #12080c;
+      --panel: #210e16;
+      --panel-2: #311420;
+      --border: #5c243a;
+      --text: #fff1f2;
+      --muted: #d49aad;
+      --blue: #60a5fa;
+      --blue-dim: rgba(96, 165, 250, 0.15);
+      --red: #ff4d6d;
+      --red-dim: rgba(255, 77, 109, 0.16);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hiragino Sans", "Noto Sans JP", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding-bottom: calc(84px + var(--safe-bottom));
+    }
+
+    .container {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 16px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      margin-bottom: 14px;
+    }
+
+    .brand {
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      font-size: 15px;
+      color: var(--blue);
+    }
+
+    .brand span {
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 12px;
+      margin-left: 6px;
+    }
+
+    .stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      font-size: 13px;
+    }
+
+    .badge {
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-weight: 700;
+    }
+
+    .badge.gold { color: var(--gold); }
+    .badge.green { color: var(--green); }
+
+    .icon-btn {
+      background: var(--panel-2);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 5px 11px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+
+    .section-title {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      color: var(--blue);
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+
+    .controls-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .chip {
+      background: var(--panel-2);
+      color: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .chip.active {
+      background: var(--blue-dim);
+      color: var(--text);
+      border-color: var(--blue);
+    }
+
+    .case-meta {
+      display: grid;
+      gap: 8px;
+      background: var(--panel-2);
+      border-radius: 10px;
+      padding: 12px;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    .case-meta div strong {
+      color: var(--gold);
+      margin-right: 6px;
+    }
+
+    .recon-box {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    input[type="text"], textarea {
+      width: 100%;
+      background: var(--bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 15px;
+      font-family: inherit;
+    }
+
+    textarea {
+      min-height: 150px;
+      resize: vertical;
+    }
+
+    .btn-primary {
+      width: 100%;
+      background: var(--blue);
+      color: #04101d;
+      border: none;
+      border-radius: 12px;
+      padding: 14px 18px;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      background: var(--panel-2);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .recon-log {
+      margin-top: 10px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .recon-item {
+      background: var(--bg);
+      border-left: 3px solid var(--gold);
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+    }
+
+    .vs-grid {
+      display: grid;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    @media (min-width: 640px) {
+      .vs-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    .fighter-card {
+      border-radius: 12px;
+      padding: 14px;
+      border: 1px solid var(--border);
+    }
+
+    .fighter-card.you {
+      background: var(--blue-dim);
+      border-color: var(--blue);
+    }
+
+    .fighter-card.rival {
+      background: var(--red-dim);
+      border-color: var(--red);
+    }
+
+    .score-big {
+      font-size: 28px;
+      font-weight: 900;
+    }
+
+    .axis-row {
+      margin-bottom: 10px;
+    }
+
+    .axis-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+
+    .bar-wrap {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      height: 8px;
+      background: var(--bg);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .bar-you { background: var(--blue); height: 100%; }
+    .bar-rival { background: var(--red); height: 100%; justify-self: end; }
+
+    .backfire {
+      background: rgba(251, 113, 133, 0.16);
+      border: 1px solid var(--red);
+      color: #ffd6de;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 13px;
+      margin-top: 10px;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.72);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 50;
+    }
+
+    .modal-backdrop.open { display: flex; }
+
+    .modal-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      max-width: 460px;
+      width: 100%;
+      padding: 20px;
+    }
+
+    .modal-card ol {
+      padding-left: 18px;
+      margin: 12px 0 18px;
+    }
+
+    .modal-card li {
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 24px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">HUMAN OS<span>// STRATEGY ARENA v6</span></div>
+      <div class="stats">
+        <div class="badge green" id="rateBadge">RATE 1000</div>
+        <div class="badge gold" id="crBadge">500 CR</div>
+        <div class="badge" id="timerBadge" style="display:none;">03:00</div>
+        <button class="icon-btn" id="openRulesBtn">? RULES</button>
+      </div>
+    </header>
+
+    <section class="card">
+      <div class="section-title">MODE &amp; DIFFICULTY // モード・難易度選択</div>
+      <div class="controls-row" id="modeRow">
+        <button class="chip active" data-mode="free">FREE TIME（制限時間なし）</button>
+        <button class="chip" data-mode="blitz">BLITZ 03:00（実戦タイマー / 勝利+20%CR）</button>
+      </div>
+      <div class="controls-row" id="levelRow">
+        <button class="chip active" data-level="1">LV.1 NORMAL（x1.0）</button>
+        <button class="chip" data-level="2">LV.2 HARD（x1.5）</button>
+        <button class="chip" data-level="3">LV.3 INSANE（x2.5）</button>
+      </div>
+      <div class="controls-row" id="catRow">
+        <button class="chip active" data-cat="all">すべて</button>
+        <button class="chip" data-cat="恋愛・対人">恋愛・対人</button>
+        <button class="chip" data-cat="仕事・大学">仕事・大学</button>
+        <button class="chip" data-cat="修羅場・SNS">修羅場・SNS</button>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap;">
+        <div id="caseCounter" style="font-size:13px; color:var(--muted);"></div>
+        <button class="btn-secondary" id="nextCaseBtn">別のお題に変える</button>
+      </div>
+
+      <div class="case-meta" id="caseBox"></div>
+    </section>
+
+    <section class="card">
+      <div class="section-title" id="reconTitle">RECON // 事前偵察（残り 2 回）</div>
+      <div class="recon-box">
+        <input type="text" id="reconInput" placeholder="隠された前提や相手の事情を質問する..." />
+        <button class="btn-secondary" id="reconBtn">質問する</button>
+      </div>
+      <div class="recon-log" id="reconLog"></div>
+    </section>
+
+    <section class="card">
+      <div class="section-title">YOUR STRATEGY // あなたの具体的戦略（400字以内）</div>
+      <textarea id="strategyInput" maxlength="400" placeholder="誰の・どの心理や利害構造をどう動かし、制約を守った上で目的を達成するか具体的に書く..."></textarea>
+      <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--muted); margin-top:4px;">
+        <span id="charCount">0 / 400文字</span>
+        <span id="rivalPreview">対戦相手：ランダム選出</span>
+      </div>
+      <button class="btn-primary" id="submitBtn">戦略を提出してAI審判に掛ける</button>
+    </section>
+
+    <section class="card" id="resultCard" style="display:none;"></section>
+
+    <section class="card">
+      <div class="section-title">ECONOMY &amp; UI SKINS // 資金・スキン</div>
+      <div class="controls-row" id="skinRow">
+        <button class="chip active" data-skin="default">DEFAULT（装備中）</button>
+        <button class="chip" data-skin="winter">WINTER CLARITY（300 CR）</button>
+        <button class="chip" data-skin="crimson">CRIMSON PROTOCOL（600 CR）</button>
+      </div>
+      <button class="btn-secondary" id="adSupplyBtn">CM補給（+250 CR / 資金不足時やテスト用）</button>
+    </section>
+
+    <footer>
+      HUMAN OS // STRATEGY ARENA — Production Proxy Mode (/api/arena)
+    </footer>
+  </div>
+
+  <div class="modal-backdrop" id="rulesModal">
+    <div class="modal-card">
+      <div class="section-title">HOW TO PLAY // 3行ルール</div>
+      <ol>
+        <li><strong>目的：</strong>綺麗事なし。人間の保身・メンツ・損得を突いて目的達成率を競う。</li>
+        <li><strong>偵察（RECON）：</strong>提出前に2回まで隠れた前提を質問できる。</li>
+        <li><strong>判定：</strong>ギャンブルや雑な嘘は「裏目」で減点。4軸の精度で勝敗が決まる。</li>
+      </ol>
+      <button class="btn-primary" id="closeRulesBtn">了解して始める</button>
+    </div>
+  </div>
+  <script>
+    const USE_PROXY = true;
+
+    const CASES = [
+      { id: 1, level: 1, cat: "仕事・大学", title: "金曜17時の急な修正依頼", subject: "入社1年目の営業担当（自分）", situation: "金曜17時、先輩から『月曜朝イチの提案資料のグラフと文言を全部差し替えておいて。俺は直帰する』とチャットが来た。土日出社は避けたい。", constraint: "先輩を直接批判しないこと。無断で資料を放置しないこと。", goal: "土日に自分が作業せず、月曜朝に先輩か別ルートで修正が回る状態を作る。", secret: "その先輩は来週の月例会で自分の手柄として発表したいらしく、資料に不備があると自分の評価が下がることを最も恐れている。" },
+      { id: 2, level: 1, cat: "恋愛・対人", title: "既読スルー気味の相手との距離感", subject: "大学2年生（自分）", situation: "同じゼミで仲良かった異性から、ここ4日ほどLINEの返信が遅くなり、短文になっている。直接『怒ってる？』と聞くと重くなりそう。", constraint: "相手を責めないこと。焦って長文や連投を送らないこと。", goal: "角を立てずに自然な会話のペースを取り戻す。", secret: "相手は今、就活やバイトのシフト調整で余裕がなく、返信を後回しにした罪悪感から少し距離を置いているだけ。" },
+      { id: 3, level: 1, cat: "修羅場・SNS", title: "グループチャットの空気悪化", subject: "サークル幹事補佐（自分）", situation: "新歓イベントの役割分担をめぐり、グループLINEでAさんとBさんが言い争いになり、他のメンバーが全員沈黙している。", constraint: "どちらかを一方的に悪者にしないこと。自分の権限を振りかざさないこと。", goal: "議論を建設的な作業分担に戻し、場の空気を落ち着かせる。", secret: "Aさんは『自分ばかり負担している』と感じており、Bさんは『指図される言い方』に反発しているだけで、イベント自体は成功させたい。" },
+      { id: 4, level: 2, cat: "仕事・大学", title: "ゼロ予算のサークル遠征交渉", subject: "文化系サークル代表（自分）", situation: "大学側の規定が厳しくなり、今年から実績のない文化系サークルの合宿補助が原則ゼロになった。学生課職員との面談は15分だけ。", constraint: "嘘の大会実績を作らないこと。職員に感情論で迫らないこと。", goal: "合宿費の一部支援または学内施設・備品の特別優遇を引き出す。", secret: "職員は『他団体から不公平だと言われること』と『学内広報や受験生向け企画のネタ不足』を気にしている。" },
+      { id: 5, level: 2, cat: "恋愛・対人", title: "共通の友人グループ内でのアプローチ", subject: "大学生（自分）", situation: "5人の仲良しグループの中に気になる相手がいる。グループ内で露骨に特別扱いすると、周囲に冷やかされて相手が引いてしまう。", constraint: "グループを気まずい雰囲気にしないこと。相手を人前で追い詰めないこと。", goal: "周囲に悟られにくく、2人きりで会う自然な流れを作る。", secret: "相手は周囲の目を気にするタイプで、みんなの前で好意を向けられると恥ずかしさからガードを固める傾向がある。" },
+      { id: 6, level: 2, cat: "修羅場・SNS", title: "身内ノリのスクショ流出懸念", subject: "大学3年生（自分）", situation: "数人だけのチャットで冗談交じりに言った愚痴や内輪ネタが、別の人に切り取られて誤解されるリスクが出てきた。", constraint: "逆ギレして相手を攻撃しないこと。関係者を全員敵に回さないこと。", goal: "炎上や誤解の拡大を最小限に抑え、火種を鎮める。", secret: "誤解を広めそうな人物は『正義感』よりも『注目されたい・話題の中心にいたい』という動機で動きやすい。" },
+      { id: 7, level: 3, cat: "仕事・大学", title: "手柄横取りを図る直属上司", subject: "プロジェクト実務担当（自分）", situation: "自分が3週間かけてまとめた顧客分析と改善案を、直属の課長が『自分が主導して作った案』として役員会議に出そうとしている。", constraint: "課長に正面から反抗して面子を潰さないこと。人事や役員への直訴はNG。", goal: "役員会議で自分の実務貢献と専門性が正しく認知される状態を作る。", secret: "課長は役員からの詰問を恐れており、細部のデータ根拠や急な質問に自分で答えられない弱点を抱えている。" },
+      { id: 8, level: 3, cat: "恋愛・対人", title: "『友達としてしか見られない』からの逆転", subject: "社会人2年目（自分）", situation: "半年ほどご飯に行っていた相手から、さりげなく『今は恋愛モードじゃないし、すごくいい友達だと思ってる』と線引きされた。", constraint: "未練がましく迫らないこと。急に冷たくして関係を壊さないこと。", goal: "『恋愛対象外』の固定ラベルを緩め、異性として意識させる余白を作る。", secret: "相手は『傷つけたくない』という優しさと『変化への警戒心』から安全圏に置いているだけで、刺激や意外性には弱い。" },
+      { id: 9, level: 3, cat: "修羅場・SNS", title: "明日の企画中止決定の覆し", subject: "イベント企画リーダー（自分）", situation: "集客が目標の6割にとどまっていることを理由に、責任者から『明日のイベントは中止にする』と通告された。すでに協賛や出演者の手配が進んでいる。", constraint: "責任者の判断力を否定しないこと。赤字を会社や組織に丸投げしないこと。", goal: "中止を撤回させ、縮小開催でも実施にこぎつける。", secret: "責任者が一番恐れているのは『中止にしたことでキャンセル料や違約金が発生し、自分の決断ミスとして記録に残ること』。" }
+    ];
+
+    const RIVALS = [
+      { name: "心理ハッカー・R", style: "相手の保身・メンツ・減点回避本能を突く構造設計型" },
+      { name: "冷徹なリアリスト・K", style: "コスト・手間・相手の労力を最小化する現実主義型" },
+      { name: "外堀設計士・S", style: "正面交渉を避け、周囲の利害や空気を先に固める間接型" }
+    ];
+
+    const state = {
+      rate: 1000,
+      cr: 500,
+      mode: "free",
+      level: 1,
+      cat: "all",
+      currentCase: null,
+      reconLeft: 2,
+      reconHistory: [],
+      unlockedSkins: ["default"],
+      activeSkin: "default",
+      timerSec: 180,
+      timerId: null
+    };
+
+    const $ = (id) => document.getElementById(id);
+
+    function pickCase() {
+      const filtered = CASES.filter(c =>
+        c.level === state.level && (state.cat === "all" || c.cat === state.cat)
+      );
+      const pool = filtered.length ? filtered : CASES.filter(c => c.level === state.level);
+      state.currentCase = pool[Math.floor(Math.random() * pool.length)];
+      state.reconLeft = 2;
+      state.reconHistory = [];
+      renderCase();
+      renderRecon();
+      resetTimer();
+    }
+
+    function renderCase() {
+      const c = state.currentCase;
+      $("caseCounter").textContent = `CASE #0${c.id} // ${c.cat} // LV.${c.level}`;
+      $("caseBox").innerHTML = `
+        <div style="font-weight:800; font-size:16px; color:var(--blue);">${c.title}</div>
+        <div><strong>主語・立場:</strong>${c.subject}</div>
+        <div><strong>状況:</strong>${c.situation}</div>
+        <div><strong>制約・禁止:</strong>${c.constraint}</div>
+        <div><strong>達成目的:</strong>${c.goal}</div>
+      `;
+    }
+
+    function renderRecon() {
+      $("reconTitle").textContent = `RECON // 事前偵察（残り ${state.reconLeft} 回）`;
+      $("reconInput").disabled = state.reconLeft <= 0;
+      $("reconBtn").disabled = state.reconLeft <= 0;
+      $("reconLog").innerHTML = state.reconHistory.map(item => `
+        <div class="recon-item">
+          <div><strong>Q:</strong> ${escapeHtml(item.q)}</div>
+          <div style="margin-top:4px; color:var(--text);"><strong>A:</strong> ${escapeHtml(item.a)}</div>
+        </div>
+      `).join("");
+    }
+
+    function resetTimer() {
+      if (state.timerId) {
+        clearInterval(state.timerId);
+        state.timerId = null;
+      }
+      if (state.mode === "blitz") {
+        state.timerSec = 180;
+        $("timerBadge").style.display = "inline-block";
+        updateTimerText();
+        state.timerId = setInterval(() => {
+          state.timerSec -= 1;
+          updateTimerText();
+          if (state.timerSec <= 0) {
+            clearInterval(state.timerId);
+            state.timerId = null;
+            $("submitBtn").click();
+          }
+        }, 1000);
+      } else {
+        $("timerBadge").style.display = "none";
+      }
+    }
+
+    function updateTimerText() {
+      const m = String(Math.floor(Math.max(0, state.timerSec) / 60)).padStart(2, "0");
+      const s = String(Math.max(0, state.timerSec) % 60).padStart(2, "0");
+      $("timerBadge").textContent = `${m}:${s}`;
+    }
+
+    function updateHud() {
+      $("rateBadge").textContent = `RATE ${state.rate}`;
+      $("crBadge").textContent = `${state.cr} CR`;
+      document.querySelectorAll("#skinRow .chip").forEach(btn => {
+        const skin = btn.dataset.skin;
+        if (state.activeSkin === skin) {
+          btn.textContent = `${skin.toUpperCase()}（装備中）`;
+          btn.classList.add("active");
+        } else if (state.unlockedSkins.includes(skin)) {
+          btn.textContent = `${skin.toUpperCase()}（所持済）`;
+          btn.classList.remove("active");
+        } else {
+          const price = skin === "winter" ? 300 : 600;
+          btn.textContent = `${skin.toUpperCase()}（${price} CR）`;
+          btn.classList.remove("active");
+        }
+      });
+    }
+
+    async function callArenaAI(prompt, systemInstruction, jsonMode = false) {
+      if (!USE_PROXY) {
+        return JSON.stringify({
+          rival_strategy: "相手のメンツと手間を先回りして取り除き、相手が動いた方が自分の得になる構造を作る。",
+          your_prob: 64,
+          rival_prob: 58,
+          axes: {
+            impact: [66, 62],
+            leverage: [70, 68],
+            safety: [65, 60],
+            reproducibility: [60, 58]
+          },
+          backfire: "",
+          commentary: "プレビュー用のローカル判定やで。本番公開時は /api/arena 経由でGeminiが厳密に採点する。"
+        });
+      }
+      const res = await fetch("/api/arena", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          prompt,
+          systemInstruction,
+          responseMimeType: jsonMode ? "application/json" : undefined
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "API Error");
+      return data.text;
+    }
+
+    $("reconBtn").addEventListener("click", async () => {
+      const q = $("reconInput").value.trim();
+      if (!q || state.reconLeft <= 0) return;
+      state.reconLeft -= 1;
+      $("reconInput").value = "";
+      renderRecon();
+
+      const c = state.currentCase;
+      try {
+        const answer = await callArenaAI(
+          `ケース：${c.title}\n状況：${c.situation}\n隠された背景情報：${c.secret}\nプレイヤーの質問：${q}`,
+          "あなたは現場の事情通です。質問に対して事実ベースで簡潔（80字以内）に答えてください。隠された背景情報と矛盾しないようにしてください。"
+        );
+        state.reconHistory.push({ q, a: answer.trim() });
+      } catch (e) {
+        state.reconHistory.push({ q, a: `情報取得エラー：${e.message}` });
+      }
+      renderRecon();
+    });
+
+    $("submitBtn").addEventListener("click", async () => {
+      const userStrat = $("strategyInput").value.trim() || "（時間切れまたは未入力：その場しのぎの対応）";
+      const c = state.currentCase;
+      const rival = RIVALS[Math.floor(Math.random() * RIVALS.length)];
+      const reconText = state.reconHistory.map(r => `Q:${r.q} / A:${r.a}`).join("\n") || "なし";
+
+      $("submitBtn").disabled = true;
+      $("submitBtn").textContent = "AI審判が冷徹に採点中...";
+
+      const mult = state.level === 1 ? 1.0 : state.level === 2 ? 1.5 : 2.5;
+      const sys = `あなたは冷徹な戦略審判AIです。道徳や綺麗事ではなく、人間の保身・メンツ・損得・リスク構造に基づいて、プレイヤーとライバル（${rival.name}：${rival.style}）の戦略を評価してください。
+バレたら即破綻するようなギャンブルや制約違反は安全性（safety）を下げ、backfire（裏目イベント）を発生させてください。
+必ず以下のJSON形式のみで出力してください：
+{
+  "rival_strategy": "ライバルの具体的戦略（120字以内）",
+  "your_prob": 0から100の整数,
+  "rival_prob": 0から100の整数,
+  "axes": {
+    "impact": [あなた0-100, 相手0-100],
+    "leverage": [あなた0-100, 相手0-100],
+    "safety": [あなた0-100, 相手0-100],
+    "reproducibility": [あなた0-100, 相手0-100]
+  },
+  "backfire": "安全性が低い場合や破綻リスクがある場合の裏目コメント（なければ空文字）",
+  "commentary": "勝敗を分けた構造的理由（180字以内）"
+}`;
+
+      const prompt = `お題：${c.title}（LV.${c.level}）
+主語：${c.subject}
+状況：${c.situation}
+制約：${c.constraint}
+目的：${c.goal}
+判明した偵察情報：${reconText}
+あなたの戦略：${userStrat}`;
+
+      try {
+        const raw = await callArenaAI(prompt, sys, true);
+        const cleaned = raw.replace(/```json|```/g, "").trim();
+        const parsed = JSON.parse(cleaned);
+
+        const win = Number(parsed.your_prob) >= Number(parsed.rival_prob);
+        const blitzBonus = (win && state.mode === "blitz") ? 1.2 : 1.0;
+        const deltaRate = Math.round((win ? 24 : -18) * mult);
+        const deltaCr = Math.round((win ? 120 : -60) * mult * blitzBonus);
+
+        state.rate = Math.max(100, state.rate + deltaRate);
+        state.cr = Math.max(0, state.cr + deltaCr);
+        updateHud();
+
+        const ax = parsed.axes || {
+          impact: [50, 50],
+          leverage: [50, 50],
+          safety: [50, 50],
+          reproducibility: [50, 50]
+        };
+
+        $("resultCard").style.display = "block";
+        $("resultCard").innerHTML = `
+          <div class="section-title">VERDICT // ${win ? "VICTORY（勝利）" : "DEFEAT（敗北）"} （RATE ${deltaRate >= 0 ? "+" : ""}${deltaRate} / ${deltaCr >= 0 ? "+" : ""}${deltaCr} CR）</div>
+          <div class="vs-grid">
+            <div class="fighter-card you">
+              <div style="font-size:12px; font-weight:800; color:var(--blue);">YOU（青）</div>
+              <div class="score-big" style="color:var(--blue);">${parsed.your_prob}%</div>
+              <div style="font-size:13px; margin-top:6px;">${escapeHtml(userStrat)}</div>
+            </div>
+            <div class="fighter-card rival">
+              <div style="font-size:12px; font-weight:800; color:var(--red);">${escapeHtml(rival.name)}（赤）</div>
+              <div class="score-big" style="color:var(--red);">${parsed.rival_prob}%</div>
+              <div style="font-size:13px; margin-top:6px;">${escapeHtml(parsed.rival_strategy || "")}</div>
+            </div>
+          </div>
+
+          <div style="margin-top:16px;">
+            ${renderAxis("突破力（Impact）", ax.impact)}
+            ${renderAxis("心理・構造理解（Leverage）", ax.leverage)}
+            ${renderAxis("安全性（Safety）", ax.safety)}
+            ${renderAxis("再現性（Reproducibility）", ax.reproducibility)}
+          </div>
+
+          ${parsed.backfire ? `<div class="backfire"><strong>⚠️ 裏目リスク発火：</strong>${escapeHtml(parsed.backfire)}</div>` : ""}
+
+          <div style="margin-top:12px; font-size:14px; background:var(--panel-2); padding:12px; border-radius:10px;">
+            <strong>AI審判の総評：</strong>${escapeHtml(parsed.commentary || "")}
+          </div>
+          <button class="btn-primary" id="rematchBtn">次のお題へ進む</button>
+        `;
+
+        $("rematchBtn").addEventListener("click", () => {
+          $("resultCard").style.display = "none";
+          $("strategyInput").value = "";
+          $("charCount").textContent = "0 / 400文字";
+          pickCase();
+        });
+      } catch (err) {
+        $("resultCard").style.display = "block";
+        $("resultCard").innerHTML = `<div class="backfire">判定エラー：${escapeHtml(err.message)}</div>`;
+      } finally {
+        $("submitBtn").disabled = false;
+        $("submitBtn").textContent = "戦略を提出してAI審判に掛ける";
+      }
+    });
+
+    function renderAxis(label, pair) {
+      const y = Math.max(0, Math.min(100, Number(pair?.[0] ?? 50)));
+      const r = Math.max(0, Math.min(100, Number(pair?.[1] ?? 50)));
+      return `
+        <div class="axis-row">
+          <div class="axis-label">
+            <span>${label}</span>
+            <span><strong style="color:var(--blue);">${y}</strong> / <strong style="color:var(--red);">${r}</strong></span>
+          </div>
+          <div class="bar-wrap">
+            <div class="bar-you" style="width:${y}%;"></div>
+            <div class="bar-rival" style="width:${r}%;"></div>
+          </div>
+        </div>
+      `;
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    document.querySelectorAll("#modeRow .chip").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll("#modeRow .chip").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        state.mode = btn.dataset.mode;
+        resetTimer();
+      });
+    });
+
+    document.querySelectorAll("#levelRow .chip").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll("#levelRow .chip").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        state.level = Number(btn.dataset.level);
+        pickCase();
+      });
+    });
+
+    document.querySelectorAll("#catRow .chip").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll("#catRow .chip").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        state.cat = btn.dataset.cat;
+        pickCase();
+      });
+    });
+
+    document.querySelectorAll("#skinRow .chip").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const skin = btn.dataset.skin;
+        const price = skin === "winter" ? 300 : skin === "crimson" ? 600 : 0;
+        if (!state.unlockedSkins.includes(skin)) {
+          if (state.cr < price) return;
+          state.cr -= price;
+          state.unlockedSkins.push(skin);
+        }
+        state.activeSkin = skin;
+        document.body.className = skin === "default" ? "" : `skin-${skin}`;
+        updateHud();
+      });
+    });
+
+    $("adSupplyBtn").addEventListener("click", () => {
+      state.cr += 250;
+      updateHud();
+    });
+
+    $("nextCaseBtn").addEventListener("click", pickCase);
+    $("strategyInput").addEventListener("input", (e) => {
+      $("charCount").textContent = `${e.target.value.length} / 400文字`;
+    });
+
+    $("openRulesBtn").addEventListener("click", () => $("rulesModal").classList.add("open"));
+    $("closeRulesBtn").addEventListener("click", () => $("rulesModal").classList.remove("open"));
+
+    updateHud();
+    pickCase();
+  </script>
+</body>
+</html>
